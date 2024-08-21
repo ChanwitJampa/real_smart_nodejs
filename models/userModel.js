@@ -1,28 +1,31 @@
 import  mongoose from 'mongoose'
 
 
-const getDate=()=>{
-    
-}
 
-var userSchema = mongoose.Schema({
-    email:{
+const userSchema = new mongoose.Schema({
+    email: {
         type: String,
-        required:[true,'Please add a email']
+        required: [true, 'Please add an email'],
+        unique: true,  
+        trim: true,
+        lowercase: true
     },
-    password:{
+    password: {
         type: String,
-        select: false,
-        required:[true,'Please add a password']
+        required: [true, 'Please add a password'],
+        select: false 
     },
-    token:{
-        type:String
+    token: {
+        type: String,
+        select: false
     },
-    createtime:{
-        type:String
+    createtime: {
+        type: Date,
+        default: Date.now 
     }
-}
-)
+}, {
+    timestamps: true 
+});
 
 userSchema.pre('save', function(next) {
     const today = new Date();
@@ -37,5 +40,7 @@ userSchema.pre('save', function(next) {
     this.createtime = date
     next();
   });
+
+  userSchema.index({ email: 1, createtime: -1 }); 
 
 export default  mongoose.model('users', userSchema)

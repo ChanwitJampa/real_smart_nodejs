@@ -19,38 +19,37 @@ const getUsers = asyncHandler(async (req, res) => {
 //@access Private
 const setUser = asyncHandler(async (req, res) => {
 
-    const { email,studentID, password } = req.body
+    const { username, password } = req.body
 
 
-    if (email) {
-        var oldUser = await User.findOne({ email })
+    if (username) {
+        var oldUser = await User.findOne({ username })
         if (oldUser) {
             res.status(400)
-            throw new Error('email user is aleady use')
+            throw new Error('username user is aleady use')
         }
     }
     else {
         res.status(400)
-        throw new Error(' please add email value')
+        throw new Error(' please add username value')
     }
 
     encryptedPassword = await encrypt(password);
 
    
-    if(!req.body.email){
-        res.status(400)
-        throw new Error('ใส่ email ด้วย')
-    }
-    if(!req.body.password){
-        res.status(400)
-        throw new Error('ใส่ password ด้วย')
-    }
+    // if(!req.body.username){
+    //     res.status(400)
+    //     throw new Error('ใส่ username ด้วย')
+    // }
+    // if(!req.body.password){
+    //     res.status(400)
+    //     throw new Error('ใส่ password ด้วย')
+    // }
 
 
     const user = await User.create({
-        email: req.body.email,
+        username: req.body.username,
         password: req.body.password,
-   
     })
 
     //create token
@@ -64,7 +63,7 @@ const setUser = asyncHandler(async (req, res) => {
     //save user token
     user.token = token
 
-    oldUser = await User.findOne({ email })
+    oldUser = await User.findOne({ username })
     res.status(200).json(oldUser)
 
 })
