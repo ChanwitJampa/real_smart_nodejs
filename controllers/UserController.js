@@ -28,14 +28,15 @@ const setUser = asyncHandler(async (req, res) => {
     const newKey = generateKey();
     const newIV = generateIV();
     const enPassword = encrypt(password,newKey,newIV)
-    console.log(process.env.MASTER_KEY)
+  
     //encrypt key, iv before store in mongodb with masterkey
     const bufferMasterKey = Buffer.from(process.env.MASTER_KEY, 'hex');
-    console.log(bufferMasterKey)
     const encryptNewKey = encrypt(newKey,bufferMasterKey,Buffer.alloc(16, 0))
     const ecruptNewIV =  encrypt(newIV,bufferMasterKey,Buffer.alloc(16, 0))
+
     // console.log("realpassword :"+password+" realkey :"+newKey.toString('hex')+ " realiv : "+newIV.toString('hex'));
     // console.log("encryptPassword :"+password+" encryptKey :"+encryptNewKey+ " encryptIV : "+ecruptNewIV);
+
     const user = await User.create({
         username: req.body.username,
         password: enPassword,
@@ -65,10 +66,6 @@ const deleteUserByUsername = asyncHandler(async (req, res) => {
     user.remove()
     res.status(200).json({ email:email })
 })
-
-
-
-
 
 export  {
     deleteUserByUsername,

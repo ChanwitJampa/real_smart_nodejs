@@ -10,11 +10,8 @@ import {encrypt, decrypt} from '../utils/aes.js'
 //@route POST /api/login
 //@access Private
 const login = asyncHandler(async (req, res) => {
-
-
-    
     const { username, password } = req.body
-    console.log("login "+username+" "+password)
+    // console.log("login "+username+" "+password)
     //validate user input
     if (!(username && password)) {
         res.status(400)
@@ -38,7 +35,7 @@ const login = asyncHandler(async (req, res) => {
                 process.env.TOKEN_KEY, {
                 expiresIn: "24h"
             })
-            console.log("login : " + token)
+            //console.log("login : " + token)
             //save token in uuser
             const oldUser = await User.findOne({ username },'-createdAt -updatedAt -__v -key -iv -createtime -_id')
    
