@@ -19,9 +19,9 @@ function encrypt(text,key,iv) {
 
 function decrypt(text, key, iv) {
     const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-    let decrypted = decipher.update(text, 'hex', 'hex'); // แปลงจาก hex เป็น hex
-    decrypted += decipher.final('hex'); // ผลลัพธ์ที่ได้เป็น hex string
-    return Buffer.from(decrypted, 'hex'); // แปลงจาก hex เป็น Buffer
+    let decrypted = decipher.update(text, 'hex', 'hex'); 
+    decrypted += decipher.final('hex'); 
+    return Buffer.from(decrypted, 'hex'); 
 }
 
 

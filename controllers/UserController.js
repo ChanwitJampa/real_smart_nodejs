@@ -4,19 +4,12 @@ import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
 import { encrypt, decrypt,generateKey,generateIV } from '../utils/aes.js';
 import  mongoose from 'mongoose'
-//@desc Get users
-//@route GET /api/users
-//@access Private
+
 const getUsers = asyncHandler(async (req, res) => {
     const users = await User.find().select('+password').select('-__v').select('-createtime')
     res.status(200).json(users)
 })
 
-
-
-//@desc Set user
-//@route POST /api/users
-//@access Private
 const setUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body
     if (username) {
@@ -41,14 +34,8 @@ const setUser = asyncHandler(async (req, res) => {
     console.log(bufferMasterKey)
     const encryptNewKey = encrypt(newKey,bufferMasterKey,Buffer.alloc(16, 0))
     const ecruptNewIV =  encrypt(newIV,bufferMasterKey,Buffer.alloc(16, 0))
-
-
-    console.log("realpassword :"+password+" realkey :"+newKey.toString('hex')+ " realiv : "+newIV.toString('hex'));
-    console.log("encryptPassword :"+password+" encryptKey :"+encryptNewKey+ " encryptIV : "+ecruptNewIV);
-
-    // console.log("-----------test-----------")
-    // console.log(decrypt(encryptNewKey,bufferMasterKey,Buffer.alloc(16, 0)))
-    // console.log(decrypt(ecruptNewIV,bufferMasterKey,Buffer.alloc(16, 0)))
+    // console.log("realpassword :"+password+" realkey :"+newKey.toString('hex')+ " realiv : "+newIV.toString('hex'));
+    // console.log("encryptPassword :"+password+" encryptKey :"+encryptNewKey+ " encryptIV : "+ecruptNewIV);
     const user = await User.create({
         username: req.body.username,
         password: enPassword,
@@ -76,8 +63,6 @@ const deleteUserByUsername = asyncHandler(async (req, res) => {
         throw new Error('user not found')
     }
     user.remove()
-
-   
     res.status(200).json({ email:email })
 })
 
