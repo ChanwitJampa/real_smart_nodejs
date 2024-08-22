@@ -2,7 +2,7 @@
 import  asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
 import  jwt from'jsonwebtoken'
-
+import {encrypt, decrypt} from '../utils/aes.js'
 
 
 
@@ -13,45 +13,47 @@ const login = asyncHandler(async (req, res) => {
 
 
     
-    const { studentID, password } = req.body
-    console.log("login "+studentID+password)
+    const { username, password } = req.body
+    console.log("login "+username+" "+password)
     //validate user input
-    if (!(studentID && password)) {
+    if (!(username && password)) {
         res.status(400)
-        throw new Error('studentID or password are  required')
+        throw new Error('username or password are  required')
     }
 
-    const user = await User.findOne({ studentID }).select('+password')
+    const user = await User.findOne({ username }).select('+password')
 
     if (user) {
-        // if ((await bcrypt.compare(password, user.password))) {
-        if (password == user.password) {
+        //decrypt key, iv with masterkey
+        const bufferMasterKey = Buffer.from(process.env.MASTER_KEY, 'hex');
+        const key = decrypt(user.key,bufferMasterKey,Buffer.alloc(16, 0))
+        const iv = decrypt(user.iv,bufferMasterKey,Buffer.alloc(16, 0))
+        // console.log(  key.toString('hex') );
+        // console.log(  iv.toString('hex') );
+        const passwordFromDecrypt = decrypt(user.password,key,iv)
+        // console.log("password from decrypt : "+passwordFromDecrypt)
+        if (passwordFromDecrypt==password) {
             const token = jwt.sign(
-                { user_id: user._id, studentID },
+                { user_id: user._id, username },
                 process.env.TOKEN_KEY, {
                 expiresIn: "24h"
             })
             console.log("login : " + token)
             //save token in uuser
-            const oldUser = await User.findOne({ studentID },'-createdAt -updatedAt')
-            //if want to deselect _id await User.findOne({ studentID }, '-_id')
+            const oldUser = await User.findOne({ username },'-createdAt -updatedAt -__v -key -iv -createtime -_id')
+   
             oldUser.token = token
             res.status(200).json(oldUser)
         }
         else{
             res.status(400)
-            throw new Error('wrong studentID or password')
+            throw new Error('wrong username or password')
         }
-
     }
     else{
         res.status(400)
-        throw new Error('wrong studentID or password')
+        throw new Error('wrong username or password')
     }
-
-   
-
-
 })
 
 export{

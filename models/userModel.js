@@ -3,9 +3,9 @@ import  mongoose from 'mongoose'
 
 
 const userSchema = new mongoose.Schema({
-    email: {
+    username: {
         type: String,
-        required: [true, 'Please add an email'],
+        required: [true, 'Please add an username'],
         unique: true,  
         trim: true,
         lowercase: true
@@ -14,6 +14,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a password'],
         select: false 
+    },
+    key: {
+        type: String,  
+        required: [true, 'Please key a password'],
+    },
+    iv: {
+        type: String,
+        required: [true, 'Please iv a password'],
     },
     token: {
         type: String,
@@ -41,6 +49,6 @@ userSchema.pre('save', function(next) {
     next();
   });
 
-  userSchema.index({ email: 1, createtime: -1 }); 
+  userSchema.index({ username: 1, createtime: -1 }); 
 
 export default  mongoose.model('users', userSchema)
