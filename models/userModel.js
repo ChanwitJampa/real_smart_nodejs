@@ -3,6 +3,14 @@ import  mongoose from 'mongoose'
 
 
 const userSchema = new mongoose.Schema({
+    name:{
+        type:String,
+        require:[true,'name is required ']
+    },
+    fullName:{
+        type:String,
+        require:[true,'name is required ']
+    },
     username: {
         type: String,
         required: [true, 'Please add an username'],
@@ -17,11 +25,11 @@ const userSchema = new mongoose.Schema({
     },
     key: {
         type: String,  
-        required: [true, 'Please key a password'],
+        required: [true, 'Please add a key'],
     },
     iv: {
         type: String,
-        required: [true, 'Please iv a password'],
+        required: [true, 'Please add a iv'],
     },
     token: {
         type: String,
