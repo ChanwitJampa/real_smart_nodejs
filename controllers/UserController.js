@@ -4,14 +4,21 @@ import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
 import { encrypt, decrypt,generateKey,generateIV } from '../utils/aes.js';
 import  mongoose from 'mongoose'
+import  validator from 'validator';
+import  { parsePhoneNumber, isValidNumber } from 'libphonenumber-js';
 
 const getUsers = asyncHandler(async (req, res) => {
     const users = await User.find().select('+password').select('-__v').select('-createtime')
     res.status(200).json(users)
 })
 
+const isEmail = (value) => validator.isEmail(value);
+const isPhoneNumber = (value) => /^0\d{9}$/.test(value);
+
 const setUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body
+
+    
     if (username) {
         var oldUser = await User.findOne({ username })
         if (oldUser) {
@@ -23,6 +30,12 @@ const setUser = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error(' please add username value')
     }
+
+    //validate
+    if (!isEmail(username) && !isPhoneNumber(username)) {
+        throw new Error(' username must be phone number or email')
+    }
+
 
     //encrypt with personal ker, iv to store password
     const newKey = generateKey();

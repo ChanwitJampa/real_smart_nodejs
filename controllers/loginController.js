@@ -35,7 +35,7 @@ const login = asyncHandler(async (req, res) => {
                 process.env.TOKEN_KEY, {
                 expiresIn: "24h"
             })
-            //console.log("login : " + token)
+            console.log("login : " + token)
             //save token in uuser
             const oldUser = await User.findOne({ username },'-createdAt -updatedAt -__v -key -iv -createtime -_id')
    
