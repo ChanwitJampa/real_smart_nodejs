@@ -10,12 +10,12 @@ import loginRoute from './routes/loginRouters.js'
 dotenv.config();
 
 connectDB()
-const port = 5000
+const port = 3000
 const app = express()
 
 app.use(cors());
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+// app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/users',userRoute)
 app.use('/api/login',loginRoute)
